@@ -1,6 +1,7 @@
 package com.projects.productserviceaug25.services;
 
 import com.projects.productserviceaug25.dtos.FakeStoreProductDto;
+import com.projects.productserviceaug25.exceptions.ProductnotFoundException;
 import com.projects.productserviceaug25.models.Category;
 import com.projects.productserviceaug25.models.Product;
 import org.springframework.http.HttpEntity;
@@ -25,6 +26,9 @@ public class FakeStoreProductService implements ProductService {
         ResponseEntity<FakeStoreProductDto[]> responseEntity = restTemplate
                 .getForEntity("https://fakestoreapi.com/products/", FakeStoreProductDto[].class);
         FakeStoreProductDto[] products = responseEntity.getBody();
+        if (products == null) {
+            return new ArrayList<>();
+        }
         List<Product> productList = new ArrayList<>();
         for (FakeStoreProductDto fakeStoreProductDto : products) {
             productList.add(convertFakeStoreProductDtoToProduct(fakeStoreProductDto));
@@ -33,34 +37,50 @@ public class FakeStoreProductService implements ProductService {
     }
 
     @Override
-    public Product getProductById(Long productId) {
+    public Product getProductById(Long productId) throws ProductnotFoundException {
         ResponseEntity<FakeStoreProductDto> responseEntity = restTemplate
                 .getForEntity("https://fakestoreapi.com/products/" + productId, FakeStoreProductDto.class);
+        FakeStoreProductDto fakeStoreProductDto = responseEntity.getBody();
+        if (fakeStoreProductDto == null) {
+            throw new ProductnotFoundException(productId);
+        }
         return convertFakeStoreProductDtoToProduct(responseEntity.getBody());
     }
 
     @Override
-    public Product createProduct(Product product) {
+    public Product createProduct(Product product) throws ProductnotFoundException {
         FakeStoreProductDto requestDto = convertProductToFakeStoreProductDto(product);
         ResponseEntity<FakeStoreProductDto> responseEntity = restTemplate
                 .postForEntity("https://fakestoreapi.com/products/", requestDto, FakeStoreProductDto.class);
-        return convertFakeStoreProductDtoToProduct(responseEntity.getBody());
+        FakeStoreProductDto fakeStoreProductDto = responseEntity.getBody();
+        if (fakeStoreProductDto == null) {
+            throw new ProductnotFoundException(product.getId());
+        }
+        return convertFakeStoreProductDtoToProduct(fakeStoreProductDto);
     }
 
     @Override
-    public Product replaceProduct(Long productid, Product product) {
+    public Product replaceProduct(Long productid, Product product) throws ProductnotFoundException {
         FakeStoreProductDto requestDto = convertProductToFakeStoreProductDto(product);
         ResponseEntity<FakeStoreProductDto> responseEntity = restTemplate.exchange(
                 "https://fakestoreapi.com/products/" + productid,
                 HttpMethod.PUT, new HttpEntity<>(requestDto), FakeStoreProductDto.class);
-        return convertFakeStoreProductDtoToProduct(responseEntity.getBody());
+        FakeStoreProductDto fakeStoreProductDto = responseEntity.getBody();
+        if (fakeStoreProductDto == null) {
+            throw new ProductnotFoundException(productid);
+        }
+        return convertFakeStoreProductDtoToProduct(fakeStoreProductDto);
     }
 
-    public Product deleteProduct(Long productId) {
+    public Product deleteProduct(Long productId) throws ProductnotFoundException {
         ResponseEntity<FakeStoreProductDto> responseEntity = restTemplate.exchange(
                 "https://fakestoreapi.com/products/" + productId,
                 HttpMethod.DELETE, null, FakeStoreProductDto.class);
-        return convertFakeStoreProductDtoToProduct(responseEntity.getBody());
+        FakeStoreProductDto fakeStoreProductDto = responseEntity.getBody();
+        if (fakeStoreProductDto == null) {
+            throw new ProductnotFoundException(productId);
+        }
+        return convertFakeStoreProductDtoToProduct(fakeStoreProductDto);
     }
 
     private FakeStoreProductDto convertProductToFakeStoreProductDto(Product product) {
