@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Entity
+@Entity(name = "product")
 public class Product extends BaseModel{
     @Column(nullable=false, unique=true)
     private String title;
