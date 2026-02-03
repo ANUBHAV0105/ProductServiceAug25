@@ -11,5 +11,8 @@ public class ProductnotFoundException extends Exception {
     public ProductnotFoundException(Long productId) {
         this.productId = productId;
     }
+    public ProductnotFoundException() {
+
+    }
 
 }

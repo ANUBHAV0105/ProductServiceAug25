@@ -5,12 +5,14 @@ import com.projects.productserviceaug25.models.Category;
 import com.projects.productserviceaug25.models.Product;
 import com.projects.productserviceaug25.repositories.CategoryRepository;
 import com.projects.productserviceaug25.repositories.ProductRepository;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service("selfProductService")
+@Primary
 public class SelfProductService implements ProductService {
 
     private ProductRepository productRepository;
