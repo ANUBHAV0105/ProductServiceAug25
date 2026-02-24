@@ -30,7 +30,7 @@ class ProductControllerTest {
         expectedProduct.setDescription("iPhone 14 pro.");
         expectedProduct.setPrice(130000.0);
         when(productService.getProductById(productId)).thenReturn(expectedProduct);
-        Product actualproduct = productController.getSingleProduct(productId);
+        Product actualproduct = productController.getSingleProduct(productId,"").getBody();
         assertEquals(expectedProduct,actualproduct,"Products are not equal");
     }
 
@@ -39,7 +39,7 @@ class ProductControllerTest {
         Long productId = 10L;
         when(productService.getProductById(productId)).thenThrow(new ProductnotFoundException());
 
-        assertThrows(ProductnotFoundException.class, () -> productController.getSingleProduct(productId));
+        assertThrows(ProductnotFoundException.class, () -> productController.getSingleProduct(productId,""));
     }
     @Test
     public void testGetAllProducts() throws ProductnotFoundException {

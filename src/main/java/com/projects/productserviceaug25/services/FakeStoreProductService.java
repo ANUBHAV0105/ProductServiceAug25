@@ -4,6 +4,7 @@ import com.projects.productserviceaug25.dtos.FakeStoreProductDto;
 import com.projects.productserviceaug25.exceptions.ProductnotFoundException;
 import com.projects.productserviceaug25.models.Category;
 import com.projects.productserviceaug25.models.Product;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -81,6 +82,11 @@ public class FakeStoreProductService implements ProductService {
             throw new ProductnotFoundException(productId);
         }
         return convertFakeStoreProductDtoToProduct(fakeStoreProductDto);
+    }
+
+    @Override
+    public Page<Product> getProductsByTitle(String title, int pageNumber, int pageSize) {
+        return null;
     }
 
     private FakeStoreProductDto convertProductToFakeStoreProductDto(Product product) {
